@@ -1,11 +1,9 @@
 # battleship.py
-# Commit 5 : score persistant et bonus de fin
 
 import random
 SIZE = 6
 
-def make_grid(n): 
-    return [["." for _ in range(n)] for _ in range(n)]
+def make_grid(n): return [["." for _ in range(n)] for _ in range(n)]
 def show(g, reveal=False):
     print("  A B C D E F")
     for i, row in enumerate(g, start=1):
@@ -17,6 +15,10 @@ def place_ship_horiz(g, L):
     c = random.randint(0, SIZE-L)
     for i in range(L): 
         g[r][c+i] = "S"
+
+def place_fleet(g, sizes):
+    for L in sizes:
+        place_ship_horiz(g, L)
 
 def parse_coord(t):
     t=t.strip().upper()
@@ -30,38 +32,38 @@ def shoot(g, r, c):
     if not (0 <= r < SIZE and 0 <= c < SIZE): 
         return "out"
     if g[r][c] == "S": 
-        g[r][c] = "X"; return "hit"
+        g[r][c] = "X"; 
+        return "hit"
     if g[r][c] == ".": 
-        g[r][c] = "o"; return "miss"
+        g[r][c] = "o"; 
+        return "miss"
     return "repeat"
 
 def all_sunk(g):
-    for row in g:
-        for cell in row:
-            if cell == "S": return False
-    return True
+    return all(cell != "S" for row in g for cell in row)
 
 def main():
     g = make_grid(SIZE)
     place_ship_horiz(g, 3)
     show(g)
-    score = 0  # ✅ persistant
+    score = 0
     while True:
         if all_sunk(g):
-            score += 3  # bonus
-            print("Victoire ! Score final:", score); 
-            show(g, True); break
+            score += 3; print("Victoire ! Score final:", score);
+            show(g, True); 
+            break
         s = input("Tir: ")
         if not s.strip(): 
             print("Fin. Score:", score); 
-            show(g, True); break
+            show(g, True); 
+            break
         r, c = parse_coord(s)
         res = shoot(g, r, c)
         if res == "hit": 
             score += 2
         elif res == "miss": 
             score -= 1
-        print("Score:", score)
+        print("Score:", score); 
         show(g)
 
 if __name__ == "__main__":
