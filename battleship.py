@@ -3,40 +3,47 @@
 import random
 SIZE = 6
 
-def make_grid(n): return [["." for _ in range(n)] for _ in range(n)]
+def make_grid(n):
+    return [["." for _ in range(n)] for _ in range(n)]
 
-def show(grid):
+def show(grid, reveal=False):
     print("  A B C D E F")
     for i, row in enumerate(grid, start=1):
-        print(f"{i} " + " ".join(row))
+        out = []
+        for cell in row:
+            out.append(cell if (cell != "S" or reveal) else ".")
+        print(f"{i} " + " ".join(out))
 
 def place_ship_horiz(grid, length):
-    r = random.randint(0, SIZE-1)
-    c = random.randint(0, SIZE-length)
-    for i in range(length): grid[r][c+i] = "S"
+    r = random.randint(0, SIZE - 1)
+    c = random.randint(0, SIZE - length)
+    for i in range(length):
+        grid[r][c + i] = "S"
 
 def parse_coord(text):
     t = text.strip().upper()
     col = ord(t[0]) - ord("A")
     row = int(t[1:]) - 1
-    return col, row
+    return row, col  # ✅ corrigé
 
-def shoot(g, r, c):
-    if 0 <= r < SIZE and 0 <= c < SIZE:
-        if g[r][c] == "S": g[r][c] = "X"; print("TOUCHE")
-        elif g[r][c] == ".": g[r][c] = "o"; print("A L'EAU")
-        else: print("Déjà visé")
+def shoot(grid, r, c):
+    if not (0 <= r < SIZE and 0 <= c < SIZE):
+        print("Hors grille"); return
+    if grid[r][c] == "S":
+        grid[r][c] = "X"; print("TOUCHE")
+    elif grid[r][c] == ".":
+        grid[r][c] = "o"; print("A L'EAU")
     else:
-        print("Hors grille")
+        print("Déjà visé")
 
 def main():
     g = make_grid(SIZE)
     place_ship_horiz(g, 3)
-    print("Mini bataille navale. Entrez A1 (vide = quitter).")
-    show(g)
+    print("A1 (ou vide pour quitter).")
+    show(g)  # désormais 'S' masqués
     while True:
         s = input("Tir: ")
-        if not s.strip(): break
+        if not s.strip(): print("Révélation:"); show(g, True); break
         r, c = parse_coord(s)
         shoot(g, r, c)
         show(g)
