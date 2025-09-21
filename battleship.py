@@ -1,3 +1,5 @@
+#battleship.py
+
 SIZE = 6  
 
 def make_grid(n):
@@ -14,4 +16,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
