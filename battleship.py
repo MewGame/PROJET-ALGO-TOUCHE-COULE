@@ -1,10 +1,11 @@
 # battleship.py
-# Commit 4 : compteur ajouté mais mal placé (reset à 0 à chaque tir)
+# Commit 5 : score persistant et bonus de fin
 
 import random
 SIZE = 6
 
-def make_grid(n): return [["." for _ in range(n)] for _ in range(n)]
+def make_grid(n): 
+    return [["." for _ in range(n)] for _ in range(n)]
 def show(g, reveal=False):
     print("  A B C D E F")
     for i, row in enumerate(g, start=1):
@@ -29,24 +30,31 @@ def shoot(g, r, c):
     if not (0 <= r < SIZE and 0 <= c < SIZE): 
         return "out"
     if g[r][c] == "S": 
-        g[r][c] = "X"; 
-        return "hit"
+        g[r][c] = "X"; return "hit"
     if g[r][c] == ".": 
-        g[r][c] = "o"; 
-        return "miss"
+        g[r][c] = "o"; return "miss"
     return "repeat"
+
+def all_sunk(g):
+    for row in g:
+        for cell in row:
+            if cell == "S": return False
+    return True
 
 def main():
     g = make_grid(SIZE)
     place_ship_horiz(g, 3)
     show(g)
+    score = 0  # ✅ persistant
     while True:
-        score = 0
+        if all_sunk(g):
+            score += 3  # bonus
+            print("Victoire ! Score final:", score); 
+            show(g, True); break
         s = input("Tir: ")
         if not s.strip(): 
-            print("Score final:", score); 
-            show(g, True); 
-            break
+            print("Fin. Score:", score); 
+            show(g, True); break
         r, c = parse_coord(s)
         res = shoot(g, r, c)
         if res == "hit": 
