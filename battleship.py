@@ -15,6 +15,12 @@ def place_ship_horiz(grid, length):
     c = random.randint(0, SIZE-length)
     for i in range(length): grid[r][c+i] = "S"
 
+def parse_coord(text):
+    t = text.strip().upper()
+    col = ord(t[0]) - ord("A")
+    row = int(t[1:]) - 1
+    return col, row
+
 def shoot(g, r, c):
     if 0 <= r < SIZE and 0 <= c < SIZE:
         if g[r][c] == "S": g[r][c] = "X"; print("TOUCHE")
