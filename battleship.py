@@ -6,7 +6,7 @@ SIZE = 6
 def make_grid(n): 
     return [["." for _ in range(n)] for _ in range(n)]
 def show(g, reveal=False):
-    print("  A B C D E F")
+    print("A B C D E F")
     for i, row in enumerate(g, start=1):
         vis = [c if (c != "S" or reveal) else "." for c in row]
         print(f"{i} " + " ".join(vis))
@@ -30,8 +30,7 @@ def place_ship(g, L):
                     return
 
 def place_fleet(g, sizes):
-    for L in sizes: 
-        place_ship(g, L)
+    for L in sizes: place_ship(g, L)
 
 def parse_coord(t):
     t=t.strip().upper()
@@ -58,6 +57,7 @@ def all_sunk(g):
 def main():
     g = make_grid(SIZE)
     place_fleet(g, [3,2,1])
+    print("Flotte: long=3, moyen=2, court=1. +2 hit, -1 miss, +3 bonus.")
     show(g)
     score = 0
     while True:
@@ -77,8 +77,8 @@ def main():
             score+=2
         elif res=="miss": 
             score-=1
-        else: 
-            score-=1
+        elif res in ("repeat","out"):
+            print("Tir ignoré (aucun changement de score).")
         print("Score:",score); 
         show(g)
 
