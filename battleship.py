@@ -14,7 +14,10 @@ def show(g, reveal=False):
 
 def place_ship_horiz(g, L):
     r = random.randint(0, SIZE-1); 
-    c = random.randint(0, SIZE-L)
+    c = random.randint(0, SIZE-L+1)
+    for i in range(L):
+        if g[r][c+i] != ".":
+            return
     for i in range(L): 
         g[r][c+i] = "S"
 
