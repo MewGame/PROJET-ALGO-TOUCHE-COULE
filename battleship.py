@@ -1,26 +1,38 @@
 # battleship.py
+# Commit 10 : bateaux horizontaux OU verticaux, au hasard
 
 import random
 SIZE = 6
 
 def make_grid(n): 
     return [["." for _ in range(n)] for _ in range(n)]
+
 def show(g, reveal=False):
-    print("A B C D E F")
+    print("  A B C D E F")
     for i, row in enumerate(g, start=1):
         vis = [c if (c != "S" or reveal) else "." for c in row]
         print(f"{i} " + " ".join(vis))
 
-def place_ship_horiz(g, L):
+def place_ship(g, L):
     while True:
-        r = random.randint(0, SIZE-1)
-        c = random.randint(0, SIZE-L)  # ✅ borne OK
-        if all(g[r][c+i] == "." for i in range(L)):
-            for i in range(L): g[r][c+i] = "S"
-            break
+        horiz = random.choice([True, False])
+        if horiz:
+            r = random.randint(0, SIZE-1)
+            c = random.randint(0, SIZE-L)
+            if all(g[r][c+i] == "." for i in range(L)):
+                for i in range(L): 
+                    g[r][c+i] = "S"
+                return
+        else:
+            r = random.randint(0, SIZE-L)
+            c = random.randint(0, SIZE-1)
+            if all(g[r+i][c] == "." for i in range(L)):
+                for i in range(L): 
+                    g[r+i][c] = "S"
+                return
 
 def place_fleet(g, sizes):
-    for L in sizes: place_ship_horiz(g, L)
+    for L in sizes: place_ship(g, L)
 
 def parse_coord(t):
     t=t.strip().upper()
@@ -47,14 +59,14 @@ def all_sunk(g):
 def main():
     g = make_grid(SIZE)
     place_fleet(g, [3,2,1])
-    print("Flotte: 3,2,1 (anti-overlap).")
+    print("Flotte: 3,2,1 (orientation aléatoire). +2 hit, -1 miss, +3 bonus.")
     show(g)
     score = 0
     while True:
         if all_sunk(g): 
-            score+=3; 
-            print("Victoire ! Score:",score); 
-            show(g,True); break
+            score+=3; print("Victoire ! Score:",score); 
+            show(g,True); 
+            break
         s=input("Tir: ")
         if not s.strip(): 
             print("Fin. Score:",score); 
